@@ -13,6 +13,9 @@ include config_setup.mk
 # python scripts directory
 PYTHON_DIR=$(LIB_DIR)/scripts
 
+# CAST directory
+CAST_DIR=submodules/CAST
+
 # create version string
 VERSION_STR := $(shell $(PYTHON_DIR)/version.py -i .)
 
@@ -44,15 +47,15 @@ $(DELIVERY_DIR):
 	rm -f $@/config_build.mk
 	ls -R $@ >> $@/README
 	sed -i -e 's/\.\.\///' $@/README
-	make -f submodules/LIB/delivery.mk insert_headers
+	make insert-headers
 	tar cvzf $(DELIVERY_DIR).tgz $(DELIVERY_DIR)
-	
-insert_headers:
-	insert_header.py '//' $(DELIVERY_SRC) 
-	insert_header.py '#'  $(DELIVERY_MKFL)
-	insert_header.py '#'  $(DELIVERY_TCL)
-	insert_header.py '#'  $(DELIVERY_SDC)
-	insert_header.py '#'  $(DELIVERY_DIR)/README
+
+insert-headers:
+	$(CAST_DIR)/insert_header.py '//' $(DELIVERY_SRC) 
+	$(CAST_DIR)/insert_header.py '#'  $(DELIVERY_MKFL)
+	$(CAST_DIR)/insert_header.py '#'  $(DELIVERY_TCL)
+	$(CAST_DIR)/insert_header.py '#'  $(DELIVERY_SDC)
+	$(CAST_DIR)/insert_header.py '#'  $(DELIVERY_DIR)/README
 
 delivery-doc:
 	mkdir -p $(DELIVERY_DIR)/document
@@ -63,4 +66,4 @@ delivery-clean:
 
 
 
-.PHONY: delivery delivery-clean
+.PHONY: delivery delivery-doc delivery-clean insert-headers
